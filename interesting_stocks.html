@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>חברות מעניינות – סקירת מניות ישראל 2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1d2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 48px 32px 40px;
+      text-align: center;
+      border-bottom: 1px solid #2d3748;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #f6e05e;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    header .subtitle {
+      color: #a0aec0;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    header .source-link {
+      display: inline-block;
+      color: #63b3ed;
+      font-size: 0.85rem;
+      text-decoration: none;
+      border: 1px solid #2b6cb0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    header .source-link:hover { background: #2b6cb0; color: #fff; }
+
+    .stats-bar {
+      background: #1a202c;
+      padding: 16px 32px;
+      text-align: center;
+      border-bottom: 1px solid #2d3748;
+      font-size: 0.9rem;
+      color: #68d391;
+    }
+    .stats-bar span { color: #f6e05e; font-weight: 700; font-size: 1.1rem; }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 20px 32px;
+      background: #141720;
+      border-bottom: 1px solid #2d3748;
+      justify-content: center;
+    }
+
+    .filter-btn {
+      background: #2d3748;
+      border: 1px solid #4a5568;
+      color: #a0aec0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: #4a5568;
+      color: #f7fafc;
+      border-color: #718096;
+    }
+    .filter-btn.active {
+      background: #2b6cb0;
+      border-color: #3182ce;
+      color: #bee3f8;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+      padding: 28px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #1a202c;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 22px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; left: 0;
+      height: 3px;
+      background: var(--accent, #4299e1);
+      border-radius: 12px 12px 0 0;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    .company-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #f7fafc;
+      line-height: 1.3;
+    }
+
+    .ticker-badge {
+      background: #2d3748;
+      border: 1px solid #4a5568;
+      color: #90cdf4;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .sector-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      background: var(--sector-bg, #1e3a5f);
+      color: var(--sector-color, #90cdf4);
+      border: 1px solid var(--sector-border, #2b6cb0);
+    }
+
+    .summary {
+      font-size: 0.875rem;
+      color: #cbd5e0;
+      line-height: 1.7;
+    }
+
+    .interesting-badge {
+      display: inline-block;
+      background: #276749;
+      color: #9ae6b4;
+      border: 1px solid #38a169;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .hidden { display: none !important; }
+
+    footer {
+      text-align: center;
+      padding: 32px;
+      color: #4a5568;
+      font-size: 0.8rem;
+      border-top: 1px solid #2d3748;
+      margin-top: 20px;
+    }
+    footer a { color: #4a5568; }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; padding: 16px; }
+      header h1 { font-size: 1.6rem; }
+      .filters { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⭐ חברות מעניינות – ישראל 2026</h1>
+  <p class="subtitle">סקירת כל המניות הישראליות 2026 | שלומי ארדן</p>
+  <a class="source-link" href="https://shlomiardan.com/all-israeli-stocks-2026/" target="_blank">← לסקירה המלאה</a>
+</header>
+
+<div class="stats-bar">
+  נמצאו <span>19</span> חברות מעניינות מתוך סקירת כל מניות הבורסה בתל-אביב
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterCards('all', this)">הכל (19)</button>
+  <button class="filter-btn" onclick="filterCards('נדל\"ן', this)">נדל"ן</button>
+  <button class="filter-btn" onclick="filterCards('מימון', this)">מימון וכספים</button>
+  <button class="filter-btn" onclick="filterCards('טכנולוגיה', this)">טכנולוגיה</button>
+  <button class="filter-btn" onclick="filterCards('ביטחוני', this)">ביטחוני</button>
+  <button class="filter-btn" onclick="filterCards('קמעונאות', this)">קמעונאות</button>
+  <button class="filter-btn" onclick="filterCards('אנרגיה', this)">אנרגיה</button>
+  <button class="filter-btn" onclick="filterCards('רפואה', this)">רפואה</button>
+</div>
+
+<div class="grid" id="stockGrid">
+
+  <!-- 1 אב-גד -->
+  <div class="card" style="--accent:#48bb78" data-sectors="נדל&quot;ן">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">אב-גד</div>
+      <div class="ticker-badge">ABGD</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a3a2a;--sector-color:#9ae6b4;--sector-border:#38a169">התחדשות עירונית / נדל"ן</span>
+    <p class="summary">יזמית נדל"ן למגורים המתמחה כמעט לחלוטין בהתחדשות עירונית במרכז הארץ. שווי שוק ~270 מ' ש"ח. שילוב ייחודי של זרוע יזמות + זרוע ביצוע קבלנית בבעלות מלאה. היקף יחידות בביצוע קפץ מ-400 לכ-1,000. צבר כולל עלה ל-33 אלף יחידות (+120% vs 2024). לפי מדדי הסקירה – החברה הזולה ביותר בענף ההתחדשות.</p>
+  </div>
+
+  <!-- 2 ארי נדל"ן -->
+  <div class="card" style="--accent:#48bb78" data-sectors="נדל&quot;ן">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">ארי נדל"ן (ארנה)</div>
+      <div class="ticker-badge">ARNA</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a3a2a;--sector-color:#9ae6b4;--sector-border:#38a169">נדל"ן מניב מסחרי / קניונים</span>
+    <p class="summary">עוסקת בנדל"ן מניב מסחרי וקניונים בישראל ובחו"ל. שווי שוק ~1.9 מיליארד, הון עצמי 917 מ'. נכסים עיקריים: סטאר סנטר אשדוד (NOI עלה ל-60 מ', תכנון להרחבה ל-75-80 מ'). פוטנציאל הכפלת ההון העצמי בשנתיים עם תב"ע ותחנת כוח בתכנון.</p>
+  </div>
+
+  <!-- 3 גאון קבוצה -->
+  <div class="card" style="--accent:#ed8936" data-sectors="תעשייה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">גאון קבוצה</div>
+      <div class="ticker-badge">GAON</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#3a2a1a;--sector-color:#fbd38d;--sector-border:#dd6b20">תעשייה / צינורות פלסטיק / תשתיות מים</span>
+    <p class="summary">קונגלומרט תעשייתי: צינורות פלסטיק למים/גז/תעשייה (פל-ים), זרוע ביצוע קבלנית. שווי שוק ~493 מ'. מכפיל רווח ~10 על רווח צפוי 45-55 מ' ב-2026. צבר שיא. שליטה חדשה (עופר גלבוע). ב-2027 ייצור צנרת גז לנתגז.</p>
+  </div>
+
+  <!-- 4 מר תעשיות -->
+  <div class="card" style="--accent:#fc8181" data-sectors="ביטחוני טכנולוגיה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">מר תעשיות</div>
+      <div class="ticker-badge">MR</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#3a1a1a;--sector-color:#feb2b2;--sector-border:#c53030">ביטחון / סייבר / תקשורת / דאטה סנטרים</span>
+    <p class="summary">קונצרן טכנולוגי-ביטחוני: ביטחון המולדת, סייבר ומודיעין, תשתיות טלקום, מערכות צבאיות. שווי שוק ~570 מ'. רווח נקי 2025 עלה ל-41 מ' (+59%). מגזר מוצרים ביטחוניים צמח 140% בשנתיים. כניסה לדאטה סנטרים. מכפיל רווח נמוך.</p>
+  </div>
+
+  <!-- 5 מניף -->
+  <div class="card" style="--accent:#63b3ed" data-sectors="מימון">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">מניף</div>
+      <div class="ticker-badge">MNIF</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a2a3a;--sector-color:#90cdf4;--sector-border:#2b6cb0">מימון חוץ-בנקאי / אשראי</span>
+    <p class="summary">חברת אשראי חוץ-בנקאית בבעלות חלקית מבטח שמיר. שווי שוק ~1.5 מיליארד. מכפיל רווח 6.5-7 מהנמוכים בענף. דיבידנד ~20 מ' בשנה, קצב רווח ~45 מ'. בעל שליטה רכש מניות. צמיחת תיק צפויה ב-2026 עם הרחבת מרווח מימון וירידת הפרשות.</p>
+  </div>
+
+  <!-- 6 שוהם ביזנס -->
+  <div class="card" style="--accent:#63b3ed" data-sectors="מימון">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">שוהם ביזנס</div>
+      <div class="ticker-badge">SHHAM</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a2a3a;--sector-color:#90cdf4;--sector-border:#2b6cb0">מימון חוץ-בנקאי / אשראי לעסקים קטנים</span>
+    <p class="summary">מימון קצר ובינוני לעסקים קטנים ובינוניים. שווי שוק ~300 מ'. קצב רווח ~45 מ', מכפיל נמוך בענף. בעל שליטה רכש מניות ב-860 אג'. ריבית פריים +0.65%. סביבה עסקית תומכת בצמיחת תיק ב-2026.</p>
+  </div>
+
+  <!-- 7 IBI -->
+  <div class="card" style="--accent:#b794f4" data-sectors="מימון">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">אי.בי.אי בית השקעות</div>
+      <div class="ticker-badge">IBI</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#2a1a3a;--sector-color:#d6bcfa;--sector-border:#805ad5">בתי השקעות / ניהול נכסים / קרנות</span>
+    <p class="summary">בית השקעות: ניהול תיקים, קרנות נאמנות, גידור, חיתום, קפיטל מרקטס, אלטרנטיבי. שווי שוק ~4.5 מיליארד. רווח נקי Q4 2025: 61.3 מ'. EBITDA Q4: 91.7 מ'. תשואה גבוהה על ההון, פיזור רחב, מותג חזק.</p>
+  </div>
+
+  <!-- 8 מיטב -->
+  <div class="card" style="--accent:#b794f4" data-sectors="מימון">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">מיטב בית השקעות</div>
+      <div class="ticker-badge">MTAV</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#2a1a3a;--sector-color:#d6bcfa;--sector-border:#805ad5">בתי השקעות / גמל ופנסיה / ניהול נכסים</span>
+    <p class="summary">בית ההשקעות הגדול בישראל לפי נכסים מנוהלים. שווי שוק ~9.2 מיליארד. גמל/פנסיה, קרנות, אשראי חוץ-בנקאי, מיטב טרייד. ביצע רכישות: קרן טריו + סוכנות ביטוח. מקים זרוע אלטרנטיבית. מכפיל 15 על 2026. מינוף תפעולי חזק.</p>
+  </div>
+
+  <!-- 9 גילת -->
+  <div class="card" style="--accent:#fc8181" data-sectors="ביטחוני טכנולוגיה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">גילת רשתות לוויין</div>
+      <div class="ticker-badge">GILT</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#3a1a1a;--sector-color:#feb2b2;--sector-border:#c53030">תקשורת לוויינית / ביטחוני</span>
+    <p class="summary">ספקית תשתיות תקשורת לוויינית. שווי שוק ~3.9 מיליארד. פעילות Commercial: SkyEdge IV, אנטנות ESA (Stellar Blu). Defense: SATCOM טקטי ומסופים ניידים (Gilat Defense). וודאקום כלקוח מרכזי באפריקה. קצב רווח >32 מ' ש"ח. מכפיל זול. כפול-רישום TASE + NASDAQ.</p>
+  </div>
+
+  <!-- 10 אקסל -->
+  <div class="card" style="--accent:#4fd1c5" data-sectors="טכנולוגיה ביטחוני">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">אקסל סולושנס</div>
+      <div class="ticker-badge">AXCEL</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a3a38;--sector-color:#81e6d9;--sector-border:#319795">IT / סייבר / ביטחוני / ענן / AI</span>
+    <p class="summary">חברת IT: סייבר, תקשורת (סיסקו), ציוד ביטחוני. שווי שוק ~330 מ'. 4 יוזמות חדשות מ-2024: Accel Cloud, Cyber Hive, Accel Intelligence (AI), ביטחוני. EV/EBITDA מהנמוך בתחום ה-IT. יעד: ~מיליארד ש"ח הכנסות ב-2027. פוטנציאל הכפלה תוך שנתיים.</p>
+  </div>
+
+  <!-- 11 מלם תים -->
+  <div class="card" style="--accent:#4fd1c5" data-sectors="טכנולוגיה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">מלם תים</div>
+      <div class="ticker-badge">MTIM</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a3a38;--sector-color:#81e6d9;--sector-border:#319795">שירותי IT / ענן / סייבר / כוח אדם</span>
+    <p class="summary">אחת מחברות שירותי ה-IT הגדולות בישראל. שווי שוק ~1,791 מ'. תחומים: ענן, סייבר, שירותי שכר, כוח אדם (מבאס). EBITDA ~327 מ', EV/EBITDA ~6-6.5. חשיפה נמוכה לאיומי AI. חברה איכותית בתמחור טוב.</p>
+  </div>
+
+  <!-- 12 טרמינל איקס -->
+  <div class="card" style="--accent:#f6ad55" data-sectors="קמעונאות">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">טרמינל איקס</div>
+      <div class="ticker-badge">TRMX</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#3a2a1a;--sector-color:#fbd38d;--sector-border:#c05621">מסחר אלקטרוני / אופנה</span>
+    <p class="summary">פלטפורמת האופנה האונליין המובילה בישראל, בשליטת קבוצת פוקס. שווי שוק ~900 מ'. מגוון מותגים + שילוח מהיר. Strongful הופך פופולרי, פוטנציאל חו"ל. נהנת ממבצע שאגת הארי (פחות יציאות לחו"ל, יותר קניות מקוונות). צמיחה מרשימה צפויה.</p>
+  </div>
+
+  <!-- 13 פוקס -->
+  <div class="card" style="--accent:#f6ad55" data-sectors="קמעונאות">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">פוקס-ויזל</div>
+      <div class="ticker-badge">FOX</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#3a2a1a;--sector-color:#fbd38d;--sector-border:#c05621">קמעונאות אופנה / איקומרס</span>
+    <p class="summary">קבוצת האופנה המובילה בישראל: FOX, הנעלה, כלי בית, תינוקות. שווי שוק ~3.7 מיליארד. פעילות בחו"ל + טרמינל איקס. הכנסות +10% ב-2025. מכפיל 16 על 2025. שיפור שיעור רווחיות + צמיחה קדימה.</p>
+  </div>
+
+  <!-- 14 מבטח שמיר -->
+  <div class="card" style="--accent:#f6e05e" data-sectors="אנרגיה מימון נדל&quot;ן טכנולוגיה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">מבטח שמיר</div>
+      <div class="ticker-badge">MBWS</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#3a361a;--sector-color:#fefcbf;--sector-border:#d69e2e">החזקות – אנרגיה / נדל"ן / מימון / טכנולוגיה</span>
+    <p class="summary">חברת החזקות מגוונת. שווי שוק ~3.8 מיליארד. אחזקות: אנרגיה (אלון תבור, קסם – ייצור חשמל), מימון (מניף), טכנולוגיה (גילת), נדל"ן. NAV ~4.5 מיליארד. מבטח אנרגיה צפויה להנפקה בשווי גבוה. הדרך הזולה ביותר להיחשף לתחום ייצור החשמל.</p>
+  </div>
+
+  <!-- 15 הייפר גלובל -->
+  <div class="card" style="--accent:#4fd1c5" data-sectors="טכנולוגיה ביטחוני">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">הייפר גלובל</div>
+      <div class="ticker-badge">HYPR</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a3a38;--sector-color:#81e6d9;--sector-border:#319795">אינטגרציית חומרה / שבבים / AI / ביטחוני</span>
+    <p class="summary">אינטגרציית חומרה: מחשוב מותאם אישית לשבבים, AI, סייבר, ציוד רפואי, ביטחוני. שווי שוק ~1,260 מ'. בשליטת פימי (54%). דיבידנד רבעוני קבוע. שתי רכישות (ינואר ומרץ 2026). מוליכים למחצה + ביטחוני = כמעט 50% מהכנסות.</p>
+  </div>
+
+  <!-- 16 טלסיס -->
+  <div class="card" style="--accent:#4fd1c5" data-sectors="טכנולוגיה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">טלסיס</div>
+      <div class="ticker-badge">TSYS</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a3a38;--sector-color:#81e6d9;--sector-border:#319795">אלקטרוניקה / System-on-Module / הפצת רכיבים</span>
+    <p class="summary">שני מגזרים: הפצת רכיבי אלקטרוניקה + SOM (System on Module) דרך ואריסייט. שווי שוק ~2.4 מיליארד. לקוח גדול = NVIDIA (חשיפה ראשונה בדוח 2025). קצב רווח ~120 מ' ש"ח, מכפיל 17-18. 20 מ' דולר מזומן נטו. חברה איכותית, רווחית, צומחת.</p>
+  </div>
+
+  <!-- 17 קווליטאו -->
+  <div class="card" style="--accent:#4fd1c5" data-sectors="טכנולוגיה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">קווליטאו</div>
+      <div class="ticker-badge">QLTU</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#1a3a38;--sector-color:#81e6d9;--sector-border:#319795">בדיקות מוליכים למחצה / Semiconductor Testing</span>
+    <p class="summary">מערכות בדיקה ואפיון לאמינות מעגלים משולבים (ICs). שווי שוק ~2.85 מיליארד. פעילות ייצורית בארה"ב. נישה עמוקה עם חסמי כניסה גבוהים. רווחיות גולמית ותפעולית חריגות לטובה. ~100 מ' דולר במאזן. מכפיל 28 על 2025 – צנוע ביחס לנובה/קמטק.</p>
+  </div>
+
+  <!-- 18 נאויטס -->
+  <div class="card" style="--accent:#f6e05e" data-sectors="אנרגיה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">נאויטס פטרוליום</div>
+      <div class="ticker-badge">NAVTS</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#3a361a;--sector-color:#fefcbf;--sector-border:#d69e2e">נפט וגז / E&P ימי עמוק</span>
+    <p class="summary">שותפות נפט וגז: מפרץ מקסיקו (ארה"ב), פוקלנד (Sea Lion), טקסס. שווי שוק ~15,391 מ'. NPV10 ~3.72 מיליארד דולר ב-Sea Lion. שפנאנדואה (Shenandoah) בפיתוח. חשיפה למחירי נפט. מומלצת כהגנה לתיק וחשיפה לסקטור האנרגיה.</p>
+  </div>
+
+  <!-- 19 סופוויב -->
+  <div class="card" style="--accent:#f687b3" data-sectors="רפואה">
+    <div class="interesting-badge">חברה מעניינת ✓</div>
+    <div class="card-header">
+      <div class="company-name">סופוויב מדיקל</div>
+      <div class="ticker-badge">SFWV</div>
+    </div>
+    <span class="sector-tag" style="--sector-bg:#3a1a2a;--sector-color:#fed7e2;--sector-border:#b83280">אסתטיקה רפואית לא-פולשנית / Medical Devices</span>
+    <p class="summary">מערכות אסתטיקה: מיצוק עור (אולטרסאונד), EMS לשרירים (Pure Impact VIP). שווי שוק ~1,340 מ'. מודל מדפסת+דיו: מכשירים + פולסים (100% GM). הכנסות 2025 +47% ל-87 מ' דולר. רוח גבית מ-GLP1/הרזיה → עור רפוי. מכפיל ~16 ל-2026. כניסה לסין בהמשך.</p>
+  </div>
+
+</div>
+
+<footer>
+  מבוסס על סקירת <a href="https://shlomiardan.com/all-israeli-stocks-2026/" target="_blank">כל המניות בישראל 2026 – שלומי ארדן</a>.<br>
+  אין באמור המלצה לקנייה/מכירה. לצרכי מידע בלבד.
+</footer>
+
+<script>
+  function filterCards(sector, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      if (sector === 'all') {
+        card.classList.remove('hidden');
+      } else {
+        const cardSectors = card.dataset.sectors || '';
+        card.classList.toggle('hidden', !cardSectors.includes(sector));
+      }
+    });
+  }
+</script>
+</body>
+</html>
